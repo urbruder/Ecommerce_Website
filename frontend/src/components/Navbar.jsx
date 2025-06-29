@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <div className='flex items-center justify-between py-5 font-medium'>
         
-        <img src={assets.real_logo} className='w-36'alt="" />
+        <Link to='/'><img src={assets.real_logo} className='w-36'alt="" /></Link>
         
         <ul className='hidden sm:flex gap-5 text-sm text-gray-700' >
           {/* hidden: Applies display: none by default (on all screen sizes) sm:flex: Overrides that and applies display: flex only on small screens and up (≥ 640px) */}
