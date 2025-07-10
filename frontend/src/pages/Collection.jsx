@@ -5,7 +5,7 @@ import { assets } from '../assets/assets';
 import Title from '../components/Title'
 import ProductItem from '../components/ProductItem';
 const Collection = () => {
-const {products}=useContext(ShopContext);
+const {products, search , showSearch}=useContext(ShopContext);
 const [showFilter,setShowFilter]=useState(false)
 const [filterProducts, setFilterProducts]=useState([])
 const [category, setCategory]=useState([])
@@ -46,7 +46,14 @@ const toggleSubCategory=(e)=>{
 //if we don't select any filter, it will show all products.
 // This will happen when we open the collection page for the first time
 //slice() method returns a shallow copy of a portion of an array into a new array object
-
+  if(showSearch && search){
+    // If search is true and search is not empty, it will filter products based on search
+    // This will filter products that match the search term
+    //.toLowerCase() method converts a string to lowercase letters
+    // This will make the search case-insensitive
+    // This will filter products that match the search term and check if the name of the product includes the search term
+    productsCopy=productsCopy.filter(item=>item.name.toLowerCase().includes(search.toLowerCase()))
+  }
   if(category.length>0){
     productsCopy=productsCopy.filter(item=>category.includes(item.category));
   }
@@ -64,7 +71,7 @@ const toggleSubCategory=(e)=>{
  }
  useEffect(()=>{
     applyFilter();
- },[category,subCategory])
+ },[category,subCategory,search,showSearch])
 
 // Logic for Filtering product ends here
 
