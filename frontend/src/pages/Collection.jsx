@@ -105,7 +105,6 @@ useEffect(()=>{
 //Logic for sorting products ends here
 
   return (
-    <div>
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
       {/* Filter Option */}
       <div className='min-w-60'>
@@ -167,8 +166,6 @@ useEffect(()=>{
             } 
         </div>
       </div>
-    </div>
-      <Footer/>
     </div>
   )
 }
