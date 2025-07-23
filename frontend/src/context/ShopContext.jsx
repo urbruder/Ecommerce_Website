@@ -60,11 +60,28 @@ const addToCart = async (itemId, size) => {
     return totalCount;
    }
 
- 
+  const updateQuantity = async (itemId, size, quantity) => {
+    let cartData = structuredClone(cartItems);
+
+    if (quantity === 0) {
+        // Remove that size
+        delete cartData[itemId][size];
+        // If no sizes left, remove the item
+        if (Object.keys(cartData[itemId]).length === 0) {
+            delete cartData[itemId];
+        }
+    } else {
+        cartData[itemId][size] = quantity;
+    }
+
+    setCartItems(cartData);
+};
+
+
     const value={
         products,currency,delivery_fee,
         search,setSearch,showSearch,setShowSearch,cartItems,addToCart,
-        getCartCount
+        getCartCount,updateQuantity
     }
     return (
         <ShopContext.Provider value={value}>
