@@ -3,6 +3,8 @@ import cors from 'cors' //cors is used to allow cross-origin requests, which mea
 import 'dotenv/config' //dotenv is used to access the environment variables from .env file like api keys, port numbers, etc.
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
+import userRouter from './routes/userRoute.js';
+import productRouter from './routes/productRoute.js';
 
 
 
@@ -17,6 +19,10 @@ app.use(express.json()) //Whatever request comes in, it will be converted to jso
 app.use(cors())// with this we can access the backend from any ip address
 
 //API Endpoints
+
+app.use('/api/user',userRouter)
+app.use('/api/product',productRouter)
+
 app.get('/',(req,res)=>{
   res.send('API WORKING')
 })
