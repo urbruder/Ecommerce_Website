@@ -71,7 +71,7 @@ const toggleSubCategory=(e)=>{
  }
  useEffect(()=>{
     applyFilter();
- },[category,subCategory,search,showSearch])
+ },[category,subCategory,search,showSearch,products])
 
 // Logic for Filtering product ends here
 
