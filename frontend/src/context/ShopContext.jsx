@@ -49,6 +49,15 @@ const addToCart = async (itemId, size) => {
 
     // Step 5: Update the cartItems state with the new cart data
     setCartItems(cartData);
+
+    if (token) {
+        try {
+            await axios.post(backendUrl + '/api/cart/add',{itemId, size},{headers:{token}})
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message)
+        }
+    }
 };
 //This function gives us the count of total products in cart.
    const getCartCount=()=>{
@@ -82,6 +91,15 @@ const addToCart = async (itemId, size) => {
     }
 
     setCartItems(cartData);
+
+    if(token){
+        try {
+            await axios.post(backendUrl+'/api/cart/update',{itemId,size,quantity},{headers:{token}})
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
 };
 
 
@@ -116,6 +134,20 @@ const addToCart = async (itemId, size) => {
            toast.error(error.message)            
         }
     }
+
+     const getUserCart=async(token)=>{
+        try {
+            const response=await axios.post(backendUrl+'/api/cart/get',{},{headers:{token}})
+
+            if(response.data.success){
+                setCartItems(response.data.cartData)
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message)
+        }
+     }
+
     useEffect(()=>{
         getProductsData()
     },[])
@@ -124,6 +156,7 @@ const addToCart = async (itemId, size) => {
     useEffect(()=>{
          if(!token && localStorage.getItem('token')){
             setToken(localStorage.getItem('token'))
+            getUserCart(localStorage.getItem('token'))
          }
     },[])
 
