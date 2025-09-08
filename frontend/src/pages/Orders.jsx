@@ -24,7 +24,7 @@ const {products,currency}=useContext(ShopContext)
                      <p>Quantity:1</p>
                      <p>Size: M</p>
                   </div>
-                  <p className='mt-2'>Date: <span className='text-gray-400'>25,Jul,2024</span></p>
+                  <p className='mt-2'>Date: <span className='text-gray-400'>8 September,2025</span></p>
                 </div>
           </div>
           <div className='md:w-1/2 flex justify-between'>
