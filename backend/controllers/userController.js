@@ -62,7 +62,8 @@ try {
     const newUser= new userModel({
         name,
         email,
-        password:hashedPassword
+        password:hashedPassword,
+        cartData: {}
     })
     // after creating a new user, we will save it to the database
     const user= await newUser.save()//After saving the user, it will return the user object
