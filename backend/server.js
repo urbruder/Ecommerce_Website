@@ -7,6 +7,7 @@ import userRouter from './routes/userRoute.js';
 import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
+import adminRouter from './routes/adminRoute.js';
 
 
 
@@ -30,5 +31,6 @@ app.use('/api/order',orderRouter)
 app.get('/',(req,res)=>{
   res.send('API WORKING')
 })
+app.use("/api/admin", adminRouter);
 
 app.listen(port,()=>console.log('server started on PORT :' + port))
