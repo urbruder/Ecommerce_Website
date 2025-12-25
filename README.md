@@ -5,6 +5,8 @@ ShopKart is a MERN stack-based e-commerce web application that provides a seamle
    
 It also includes a dedicated Admin Panel for managing products, checking orders, and handling inventory.
 Admin Panel: https://shopkart-admin.vercel.app/
+
+
 ShopKart website: https://ecommerce-website-lake-three-10.vercel.app/
 
 ## Features
