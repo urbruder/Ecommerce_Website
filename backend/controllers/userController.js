@@ -82,20 +82,29 @@ try {
 
 
 //Route for admin login
-const adminLogin= async(req,res)=>{
-try {
-    const {email,password}=req.body
-    if(email===process.env.ADMIN_EMAIL && password===process.env.ADMIN_PASSWORD){
-        const token=jwt.sign(email+password,process.env.JWT_SECRET);
-        res.json({success:true,token});
+const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      // ✅ Proper JWT payload
+      const token = jwt.sign(
+        { email: process.env.ADMIN_EMAIL },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      return res.json({ success: true, token });
+    } else {
+      return res.json({ success: false, message: "Wrong Credentials" });
     }
-    else{
-        res.json({success:false,message:"Wrong Credentials"});
-    }
-} catch (error) {
-     console.log(error);
-    res.json({success:false,message:error.message});
-}
-}
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
  export {loginUser,registerUser,adminLogin};
