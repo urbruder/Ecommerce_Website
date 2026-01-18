@@ -2,6 +2,7 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken'
+import sendEmail from '../utils/sendEmail.js';
 // This file is part of the backend controllers for user management in an e-commerce application.
 
 // This function creates a JWT token for the user
@@ -107,4 +108,99 @@ const adminLogin = async (req, res) => {
   }
 };
 
- export {loginUser,registerUser,adminLogin};
+//------------------- Logic for forget password-----------------
+const forgotPassword=async(req,res)=>{
+try {
+  const {email}=req.body;
+  if(!email){
+    return res.status(400).json(
+      {
+       message: "Email is required",
+       success:false
+  })
+  }
+  const newUser=await userModel.findOne({email});
+  if(!newUser){
+    return res.status(401).json({
+      success:false,
+      message:"User does not exist"
+    })
+  }
+
+  const newToken=jwt.sign(
+    {id:newUser._id},
+    process.env.JWT_SECRET,
+    {expiresIn: "10m"}
+  )
+   const resetLink = `${process.env.FRONTEND_URL}/reset-password/${newToken}`;
+   //This is the message we want to mail along with the link   
+   const html = `
+      <h2>Password Reset</h2>
+      <p>Click below to reset your password</p>
+      <a href="${resetLink}">Reset Password</a>
+      <p>This link expires in 10 minutes</p>
+    `;
+    
+      await sendEmail(newUser.email, "Reset Password", html);
+    
+    res.json({ success: true });
+
+} catch (error) {
+  console.log("Error in logging in while resetting password: ",error);
+    res.status(500).json({
+      success:false,
+      message:"Error while Logging in"
+    })
+}
+}
+// -------------Reset Password logic--------------
+const resetPassword = async (req, res) => {
+  try {
+    const { password, token } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Token and password are required",
+      });
+    }
+
+    // STEP 10: Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // STEP 11: Find user
+    const user = await userModel.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    // STEP 11: Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(400).json({
+        success: false,
+        message: "Reset link expired",
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message: "Invalid reset link",
+    });
+  }
+};
+
+ export {loginUser,registerUser,adminLogin,forgotPassword,resetPassword};

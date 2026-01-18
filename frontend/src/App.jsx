@@ -14,6 +14,8 @@ import Searchbar from './components/Searchbar'
 import Footer from './components/Footer'
 import { ToastContainer, toast } from 'react-toastify';
 import Verify from './pages/Verify'
+import ForgetPassword from './pages/ForgetPassword'
+import ResetPassword from './pages/ResetPassword'
 
 const App = () => {
   return (
@@ -26,6 +28,8 @@ const App = () => {
             <Route path='/collection' element={<Collection/>}/>
             <Route path='/about' element={<About/>}/>
             <Route path='/login' element={<Login/>}/>
+            <Route path='/forgot-password' element={<ForgetPassword/>}/>
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path='/orders' element={<Orders/>}/>
             <Route path='/contact' element={<Contact/>}/>
             <Route path='/product/:productId' element={<Product/>}/>
