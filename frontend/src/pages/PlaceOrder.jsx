@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Title from '../components/Title'
 import CartTotal from '../components/CartTotal'
 import { assets } from '../assets/assets'
@@ -8,7 +8,7 @@ import axios from 'axios'
 const PlaceOrder = () => {
 
     const [method,setMethod]=useState('cod');
-    const{navigate,backendUrl,token,cartItems,setCartItems,getCartAmount,delivery_fee,products}=useContext(ShopContext)
+    const{navigate,backendUrl,token,cartItems,setCartItems,getCartAmount,delivery_fee,products,userProfile}=useContext(ShopContext)
     const [formData,setFormData]=useState({
       firstName:'',
       lastName:'',
@@ -24,10 +24,27 @@ const PlaceOrder = () => {
     const onChangeHandler=(event)=>{
        const name=event.target.name
        const value=event.target.value
-
        setFormData(data=>({...data,[name]:value}))
-
     }
+
+    // Pre-fill form with saved profile address when component mounts
+    useEffect(() => {
+        if (userProfile?.address) {
+            const a = userProfile.address;
+            setFormData(prev => ({
+                ...prev,
+                firstName: a.firstName || prev.firstName,
+                lastName:  a.lastName  || prev.lastName,
+                street:    a.street    || prev.street,
+                city:      a.city      || prev.city,
+                state:     a.state     || prev.state,
+                zipcode:   a.zipcode   || prev.zipcode,
+                country:   a.country   || prev.country,
+                phone:     a.phone     || prev.phone,
+                email:     userProfile.email || prev.email,
+            }));
+        }
+    }, [userProfile]);
 
     const onsubmitHandler=async(event)=>{
       event.preventDefault();

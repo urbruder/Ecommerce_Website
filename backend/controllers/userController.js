@@ -203,4 +203,32 @@ const resetPassword = async (req, res) => {
   }
 };
 
- export {loginUser,registerUser,adminLogin,forgotPassword,resetPassword};
+// ----------- Get User Profile -----------
+const getProfile = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await userModel.findById(userId).select('-password -cartData');
+        if (!user) return res.json({ success: false, message: 'User not found' });
+        res.json({ success: true, name: user.name, email: user.email, address: user.address || {} });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+// ----------- Update User Profile -----------
+const updateProfile = async (req, res) => {
+    try {
+        const { userId, name, address } = req.body;
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (address) updateData.address = address;
+        await userModel.findByIdAndUpdate(userId, updateData);
+        res.json({ success: true, message: 'Profile updated successfully' });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+ export {loginUser,registerUser,adminLogin,forgotPassword,resetPassword,getProfile,updateProfile};

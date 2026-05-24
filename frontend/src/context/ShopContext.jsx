@@ -10,14 +10,31 @@ const ShopContextProvider=(props)=>{
     const delivery_fee=10;
     const backendUrl=import.meta.env.VITE_BACKEND_URL;
     const [search,setSearch]=useState('');
-    //this will be used to search products
-    //if we set this to '' it will show all products otherwise it will filter products based
     const [showSearch,setShowSearch]=useState(false);
-    //if we set this to true, it will show the search bar otherwise it will not show the search bar
     const [cartItems,setCartItems]=useState({});
     const [products,setProducts]=useState([]);
-    const [token,setToken]=useState('')
+    const [token,setToken]=useState('');
+    const [userProfile,setUserProfile]=useState(null);
     const navigate=useNavigate();
+
+    const fetchUserProfile = async (tok) => {
+        try {
+            const response = await axios.post(
+                backendUrl + '/api/user/profile',
+                {},
+                { headers: { token: tok } }
+            );
+            if (response.data.success) {
+                setUserProfile({
+                    name: response.data.name,
+                    email: response.data.email,
+                    address: response.data.address || {}
+                });
+            }
+        } catch (error) {
+            console.log('Failed to fetch profile:', error);
+        }
+    };
 
 
 
@@ -155,8 +172,10 @@ const getCartAmount = () => {
 
     useEffect(()=>{
          if(!token && localStorage.getItem('token')){
-            setToken(localStorage.getItem('token'))
-            getUserCart(localStorage.getItem('token'))
+            const savedToken = localStorage.getItem('token');
+            setToken(savedToken);
+            getUserCart(savedToken);
+            fetchUserProfile(savedToken);
          }
     },[])
 
@@ -164,7 +183,8 @@ const getCartAmount = () => {
     const value={
         products,currency,delivery_fee,
         search,setSearch,showSearch,setShowSearch,cartItems,addToCart,
-        getCartCount,updateQuantity,getCartAmount,navigate, backendUrl,setToken,token,setCartItems
+        getCartCount,updateQuantity,getCartAmount,navigate, backendUrl,setToken,token,setCartItems,
+        userProfile,setUserProfile,fetchUserProfile
     }
     return (
         <ShopContext.Provider value={value}>
