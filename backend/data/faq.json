@@ -1,0 +1,502 @@
+[
+    {
+        "id": 1,
+        "question": "What colors go well with pink?",
+        "answer": "Pink pairs beautifully with light blue, navy blue, grey, white, and black for complementary outfits. For a tonal look, try pairing pink with red or cream/beige tones."
+    },
+    {
+        "id": 2,
+        "question": "I have a pink top. What bottoms should I wear?",
+        "answer": "With a pink top, you can go for navy blue, grey, white, or black bottoms for a balanced look. If you want a bold tonal outfit, try red or cream-colored bottoms."
+    },
+    {
+        "id": 3,
+        "question": "What are the best complementary colors for red clothing?",
+        "answer": "Red clothing pairs well with light blue, navy blue, grey, white, and black. For a tonal outfit, combine red with pink or cream shades."
+    },
+    {
+        "id": 4,
+        "question": "I'm wearing a red dress. What jacket should I wear?",
+        "answer": "A navy blue, grey, or black jacket would complement your red dress perfectly. For a softer look, try a light blue or cream jacket."
+    },
+    {
+        "id": 5,
+        "question": "What colors go with orange?",
+        "answer": "Orange works great with dark green, light blue, navy blue, white, and black. For a tonal outfit, pair orange with cream or brown tones."
+    },
+    {
+        "id": 6,
+        "question": "I have an orange shirt. What pants should I pair it with?",
+        "answer": "Dark green, navy blue, or black pants would look sharp with an orange shirt. White pants also work for a fresh contrast. For a warm tonal look, try cream or brown pants."
+    },
+    {
+        "id": 7,
+        "question": "What colors complement beige clothing?",
+        "answer": "Beige pairs well with navy blue, plum/purple, brown, white, and black. For a tonal pop, try yellow or orange accessories or pieces."
+    },
+    {
+        "id": 8,
+        "question": "I have a beige coat. What outfits work under it?",
+        "answer": "Under a beige coat, try navy blue, plum, or brown outfits. White and black also work cleanly. For a warm tonal vibe, yellow or orange inner layers add a nice pop."
+    },
+    {
+        "id": 9,
+        "question": "What goes well with yellow clothes?",
+        "answer": "Yellow pairs nicely with dark green, navy blue, white, and black. For a tonal look, cream is a soft and elegant match for yellow."
+    },
+    {
+        "id": 10,
+        "question": "I want to wear a yellow dress. What accessories and shoes should I choose?",
+        "answer": "With a yellow dress, choose navy blue, dark green, or black shoes and accessories. White works for a clean look. For a tonal outfit, add cream or ivory accessories."
+    },
+    {
+        "id": 11,
+        "question": "What colors match green clothing?",
+        "answer": "Green looks great with orange, plum/purple, white, and black. For a tonal look, pair green with yellow or light blue."
+    },
+    {
+        "id": 12,
+        "question": "I have a dark green jacket. What should I wear with it?",
+        "answer": "Pair your dark green jacket with orange, plum, white, or black pieces. For a tonal feel, yellow or light blue inner layers work well."
+    },
+    {
+        "id": 13,
+        "question": "What colors complement light blue?",
+        "answer": "Light blue pairs well with pink, red, orange, white, and black. For a tonal outfit, go for dark navy blue or plum/purple."
+    },
+    {
+        "id": 14,
+        "question": "I have a light blue shirt. What trousers go with it?",
+        "answer": "White, black, or red trousers complement a light blue shirt nicely. For a tonal look, navy blue or dark plum trousers work great."
+    },
+    {
+        "id": 15,
+        "question": "What colors go with dark blue or navy?",
+        "answer": "Navy blue pairs wonderfully with pink, red, yellow, grey, white, and black. For a tonal look, light blue or plum are excellent choices."
+    },
+    {
+        "id": 16,
+        "question": "I have a navy blazer. What can I wear with it?",
+        "answer": "A navy blazer goes with almost anything — white, grey, red, or yellow outfits underneath. For a tonal outfit, pair it with light blue or plum pieces."
+    },
+    {
+        "id": 17,
+        "question": "What colors match purple or plum clothing?",
+        "answer": "Purple/plum pairs well with orange, grey, dark green, white, and black. For a tonal outfit, light blue or dark navy are excellent companions."
+    },
+    {
+        "id": 18,
+        "question": "I want to wear a purple top. What bottoms work best?",
+        "answer": "Try grey, dark green, orange, or black bottoms with a purple top. White also works for contrast. For a tonal purple outfit, pair with light blue or navy bottoms."
+    },
+    {
+        "id": 19,
+        "question": "What colors go with brown?",
+        "answer": "Brown pairs well with cream/beige and black for a classic, understated look. For a tonal boost, orange is a warm and stylish pairing with brown."
+    },
+    {
+        "id": 20,
+        "question": "I have brown boots. What outfits should I build around them?",
+        "answer": "Brown boots look great with cream, beige, or black outfits. For a tonal and warm feel, orange or rust-toned pieces pair beautifully with brown."
+    },
+    {
+        "id": 21,
+        "question": "What colors complement grey clothing?",
+        "answer": "Grey pairs well with pink, red, navy blue, and plum for complementary outfits. For a tonal look, white and black are classic, clean choices with grey."
+    },
+    {
+        "id": 22,
+        "question": "I have grey trousers. What tops go with them?",
+        "answer": "Pink, red, navy blue, or plum tops work wonderfully with grey trousers. For a tonal all-neutral look, white or black tops are always reliable."
+    },
+    {
+        "id": 23,
+        "question": "What is a tonal outfit?",
+        "answer": "A tonal outfit means wearing colors that are in the same color family or have similar warmth and depth. For example, wearing pink and red together, or navy and light blue together, creates a tonal effect."
+    },
+    {
+        "id": 24,
+        "question": "What is a complementary outfit?",
+        "answer": "A complementary outfit uses colors from different parts of the color wheel that contrast and enhance each other. For example, pairing orange with navy blue or red with light blue creates a complementary, balanced look."
+    },
+    {
+        "id": 25,
+        "question": "Can I wear pink and red together?",
+        "answer": "Yes! Pink and red together create a bold, fashionable tonal outfit. It's a trendy combination that works especially well in dresses, co-ords, or layered looks."
+    },
+    {
+        "id": 26,
+        "question": "Can I wear orange and green together?",
+        "answer": "Yes! Orange and dark green are complementary colors that work very well together. They create a rich, earthy, and vibrant look that's both stylish and eye-catching."
+    },
+    {
+        "id": 27,
+        "question": "Is black a safe color to pair with anything?",
+        "answer": "Absolutely. Black is a universal neutral that pairs with every color — pink, red, orange, beige, yellow, green, light blue, navy, purple, brown, and grey all look great with black."
+    },
+    {
+        "id": 28,
+        "question": "Is white a good neutral to mix with any color?",
+        "answer": "Yes, white is one of the most versatile neutrals. It pairs with pink, red, orange, beige, yellow, green, light blue, navy, purple, and grey to create fresh, clean outfits."
+    },
+    {
+        "id": 29,
+        "question": "What colors work with cream or ivory clothing?",
+        "answer": "Cream and ivory are neutral tones closest to beige. They work tonally with pink, orange, yellow, and brown, and look clean and classic alongside navy blue or black."
+    },
+    {
+        "id": 30,
+        "question": "What outfit should I wear for a job interview if I want to look professional?",
+        "answer": "Navy blue or dark grey are ideal for professional settings. Pair navy with white or light blue for a classic look. Alternatively, a grey outfit with a white or navy top is polished and interview-ready."
+    },
+    {
+        "id": 31,
+        "question": "What colors should I wear on a first date?",
+        "answer": "Red is a classic choice for dates as it exudes confidence. Pair red with navy or grey for a sophisticated look. Alternatively, a pink outfit with navy or black accessories looks charming and warm."
+    },
+    {
+        "id": 32,
+        "question": "What colors should I wear for a casual day out?",
+        "answer": "Light blue with white or pink is a great casual combination. Orange with navy or dark green also looks fun and relaxed. Yellow with navy is another cheerful and effortless casual choice."
+    },
+    {
+        "id": 33,
+        "question": "What should I wear for a beach outing?",
+        "answer": "Light blue, white, and orange are perfect beach colors. Try a white outfit with orange accessories, or a light blue dress with pink or coral accents for a fresh, summery look."
+    },
+    {
+        "id": 34,
+        "question": "What colors are good for a formal event or gala?",
+        "answer": "Deep navy, plum, and dark green are luxurious formal choices. Pair navy with grey or light blue for elegance. Plum with grey or black makes a dramatic, sophisticated statement."
+    },
+    {
+        "id": 35,
+        "question": "What is a good outfit for a winter look?",
+        "answer": "For winter, try a navy coat with grey or plum underneath. Brown with cream or orange accents is warm and cozy. Deep green with orange or black also looks rich and seasonal."
+    },
+    {
+        "id": 36,
+        "question": "What colors are best for a summer wardrobe?",
+        "answer": "Yellow, orange, light blue, and white are quintessential summer colors. Pair yellow with navy or dark green, or light blue with pink or white for a breezy summer look."
+    },
+    {
+        "id": 37,
+        "question": "What colors work for an autumn/fall wardrobe?",
+        "answer": "Autumn calls for warm tones — orange, brown, beige, green, and red. Try orange with dark green or navy, or brown with cream and orange for a rich autumnal palette."
+    },
+    {
+        "id": 38,
+        "question": "What colors are ideal for a spring wardrobe?",
+        "answer": "Spring is all about pink, light blue, yellow, and green. Pair pink with light blue or navy, yellow with white or navy, and light blue with pink or orange for a fresh spring feel."
+    },
+    {
+        "id": 39,
+        "question": "I have a red saree. What blouse color should I choose?",
+        "answer": "A light blue, navy, grey, or black blouse would complement your red saree beautifully. For a tonal look, a pink or cream blouse creates a soft, cohesive appearance."
+    },
+    {
+        "id": 40,
+        "question": "I have a beige kurta. What dupatta color should I pair with it?",
+        "answer": "A navy blue, plum, or brown dupatta will look elegant with a beige kurta. For a tonal look, try a yellow or orange dupatta for a vibrant, warm combination."
+    },
+    {
+        "id": 41,
+        "question": "What color shirt should I wear with blue jeans?",
+        "answer": "Blue jeans are versatile — pair them with pink, red, white, grey, or black shirts for a great look. For a tonal denim look, choose a lighter blue or plum-toned shirt."
+    },
+    {
+        "id": 42,
+        "question": "What color pants go with a white shirt?",
+        "answer": "White is neutral, so it works with everything. Navy, grey, beige, black, or even green pants all look great with a white shirt. For a bold pop, try red or orange pants."
+    },
+    {
+        "id": 43,
+        "question": "I want a monochrome outfit. What colors work best for that?",
+        "answer": "Tonal monochrome outfits work great in navy, grey, green, blue, or plum. For warmer tones, try a full orange or brown look. Pink and red together also make a trendy monochrome statement."
+    },
+    {
+        "id": 44,
+        "question": "What color accessories go with a yellow outfit?",
+        "answer": "Dark green, navy, or black accessories elevate a yellow outfit. For a tonal finish, cream or ivory accessories complement yellow softly and elegantly."
+    },
+    {
+        "id": 45,
+        "question": "What color bag should I carry with a green dress?",
+        "answer": "An orange, plum, or black bag works beautifully with a green dress. For a tonal look, choose a yellow or light blue bag."
+    },
+    {
+        "id": 46,
+        "question": "What color shoes go with a navy outfit?",
+        "answer": "With navy, white, grey, red, yellow, and black shoes all look sharp. For a tonal look, light blue or plum shoes add depth without breaking the color story."
+    },
+    {
+        "id": 47,
+        "question": "What color scarf should I wear with a grey coat?",
+        "answer": "A pink, red, navy, or plum scarf pops beautifully against a grey coat. For a clean tonal look, a white or black scarf keeps it refined and simple."
+    },
+    {
+        "id": 48,
+        "question": "What color earrings should I wear with an orange dress?",
+        "answer": "Dark green, navy blue, or black earrings complement an orange dress elegantly. For a tonal, warm-toned look, brown or cream earrings are a subtle choice."
+    },
+    {
+        "id": 49,
+        "question": "What color watch strap goes with a navy blue outfit?",
+        "answer": "A grey, white, or black watch strap works cleanly with navy. For a tonal look, a light blue or plum strap adds a stylish, coordinated touch."
+    },
+    {
+        "id": 50,
+        "question": "What color belt should I wear with beige trousers?",
+        "answer": "A navy, brown, or black belt works best with beige trousers. For a tonal warm look, an orange or camel-tone belt blends harmoniously."
+    },
+    {
+        "id": 51,
+        "question": "What color hat goes with a red outfit?",
+        "answer": "A navy, grey, or black hat complements a red outfit well. For a tonal look, a pink or cream hat creates a softer, coordinated appearance."
+    },
+    {
+        "id": 52,
+        "question": "What color sunglasses frame matches a yellow outfit?",
+        "answer": "Tortoiseshell (brown), dark green, navy, or black sunglasses work great with yellow. For a tonal finish, cream or ivory frames are elegant and understated."
+    },
+    {
+        "id": 53,
+        "question": "Can I wear purple with green?",
+        "answer": "Yes! Purple (plum) and dark green are listed as complementary colors. This combination is bold and unexpected — great for making a fashion-forward statement."
+    },
+    {
+        "id": 54,
+        "question": "Can I wear yellow and navy together?",
+        "answer": "Absolutely! Yellow and navy blue are a classic complementary pair. The contrast between the bright yellow and deep navy creates a crisp, striking combination."
+    },
+    {
+        "id": 55,
+        "question": "Can I wear brown and orange together?",
+        "answer": "Yes! Brown and orange are a tonal pairing that creates a warm, earthy aesthetic. This combination is especially great for autumn and winter looks."
+    },
+    {
+        "id": 56,
+        "question": "What should I avoid pairing with orange?",
+        "answer": "Avoid pairing orange with pink or red, as those tones can clash. Stick to dark green, light blue, navy, white, black, cream, or brown for the best results."
+    },
+    {
+        "id": 57,
+        "question": "What should I avoid pairing with purple?",
+        "answer": "Avoid pairing purple with red or orange unless it's intentional for a bold look. Best pairings for purple are orange, grey, dark green, white, black, light blue, and navy."
+    },
+    {
+        "id": 58,
+        "question": "Is grey a good color to build a wardrobe around?",
+        "answer": "Yes! Grey is incredibly versatile. It pairs well with pink, red, navy, plum, white, and black — making it a perfect neutral base for any wardrobe."
+    },
+    {
+        "id": 59,
+        "question": "What is the most versatile color for a wardrobe?",
+        "answer": "Navy blue is arguably the most versatile color — it pairs with pink, red, yellow, grey, white, black, and light blue. Black and white follow closely as the ultimate neutrals."
+    },
+    {
+        "id": 60,
+        "question": "I want to buy one jacket that goes with everything. What color should I choose?",
+        "answer": "A navy blue or dark grey jacket will go with nearly any outfit. Black is also a foolproof universal option that pairs with every color in your wardrobe."
+    },
+    {
+        "id": 61,
+        "question": "What color dress is easiest to style for any occasion?",
+        "answer": "A navy blue, grey, or black dress is easiest to style — they can be dressed up or down and pair with almost any color for accessories and layering."
+    },
+    {
+        "id": 62,
+        "question": "What color top goes with red pants?",
+        "answer": "Light blue, navy, grey, white, or black tops work well with red pants. For a tonal look, a pink or cream top creates a warm, cohesive outfit."
+    },
+    {
+        "id": 63,
+        "question": "What color top goes with green pants?",
+        "answer": "Orange, plum, white, or black tops complement green pants beautifully. For a tonal look, yellow or light blue tops work well."
+    },
+    {
+        "id": 64,
+        "question": "What color top goes with yellow pants?",
+        "answer": "Dark green, navy, white, or black tops pair well with yellow pants. For a tonal look, a cream or ivory top creates an elegant, warm combination."
+    },
+    {
+        "id": 65,
+        "question": "What color top goes with purple pants?",
+        "answer": "Orange, grey, dark green, white, or black tops complement purple pants. For a tonal look, a light blue or navy top works harmoniously."
+    },
+    {
+        "id": 66,
+        "question": "What color tops go with beige pants?",
+        "answer": "Navy, plum, brown, white, or black tops all look great with beige pants. For a tonal warm look, yellow or orange adds a vibrant pop."
+    },
+    {
+        "id": 67,
+        "question": "What color outfit should I wear if I want to stand out?",
+        "answer": "For maximum impact, wear orange paired with dark green, or yellow paired with navy. Alternatively, a full red or plum monochromatic outfit commands attention."
+    },
+    {
+        "id": 68,
+        "question": "What color outfit should I wear for a subtle, understated look?",
+        "answer": "For a subtle look, choose a tonal outfit — navy with light blue, brown with cream, or grey with white and black. These combinations are refined without being loud."
+    },
+    {
+        "id": 69,
+        "question": "What outfit color is best for a picnic or outdoor day event?",
+        "answer": "Light blue, yellow, white, or green are perfect for outdoor events. Try yellow with navy, or light blue with pink or orange for a cheerful, fresh vibe."
+    },
+    {
+        "id": 70,
+        "question": "What color kurta should I buy that goes with many dupattas?",
+        "answer": "A beige, navy, or grey kurta is most versatile. Beige pairs with navy, plum, yellow, orange, and brown dupattas. Navy works with grey, pink, red, and yellow. Grey pairs with pink, red, plum, and white dupattas."
+    },
+    {
+        "id": 71,
+        "question": "What colors look good together for a couple's outfit coordination?",
+        "answer": "For couple coordination, try navy and white, red and grey, orange and dark green, or yellow and navy. These complementary pairs look cohesive without being identical."
+    },
+    {
+        "id": 72,
+        "question": "What colors work for a bridesmaid outfit if the bride is wearing red?",
+        "answer": "Bridesmaids in pink, light blue, navy, or grey would complement a red bridal outfit beautifully. Cream is also a soft and elegant choice that harmonizes with red."
+    },
+    {
+        "id": 73,
+        "question": "What is the best color combination for a corporate/office wardrobe?",
+        "answer": "For office wear, stick to navy, grey, beige, white, and black as your base. Add controlled pops of red, light blue, or plum to keep the look professional yet polished."
+    },
+    {
+        "id": 74,
+        "question": "I own mostly grey clothes. What accent colors should I add to my wardrobe?",
+        "answer": "Add pink, red, navy blue, and plum pieces to complement your grey wardrobe. These colors will instantly freshen up your outfits and create multiple new combinations."
+    },
+    {
+        "id": 75,
+        "question": "I own mostly navy blue clothes. What accent colors should I add?",
+        "answer": "Add pink, red, yellow, grey, and white pieces to your navy wardrobe. These complementary colors will diversify your outfits and keep things visually interesting."
+    },
+    {
+        "id": 76,
+        "question": "What color kurta should I pair with a navy blue palazzo?",
+        "answer": "A pink, red, yellow, grey, white, or black kurta would look wonderful with a navy blue palazzo. For a tonal look, a light blue or plum kurta adds depth."
+    },
+    {
+        "id": 77,
+        "question": "Can I wear green and blue together?",
+        "answer": "Yes! Dark green and light blue or navy can work together, especially in a tonal palette. Green and light blue is a fresh, nature-inspired combination. For bolder contrast, green with orange is even more striking."
+    },
+    {
+        "id": 78,
+        "question": "What color co-ord set would be easiest to style?",
+        "answer": "A navy, grey, or beige co-ord set is easiest to style — all three are neutrals that work with countless accessories. For a bolder statement, a red or plum co-ord set is effortlessly chic."
+    },
+    {
+        "id": 79,
+        "question": "What color lehenga is easiest to pair with a blouse?",
+        "answer": "A beige, navy, or grey lehenga offers the most blouse options. Beige works with navy, plum, orange, or yellow blouses. Navy works with pink, red, yellow, or grey blouses."
+    },
+    {
+        "id": 80,
+        "question": "What color shawl should I carry with a pink outfit?",
+        "answer": "A light blue, navy, grey, or white shawl complements a pink outfit perfectly. For a tonal look, a red or cream shawl creates a warm, fashion-forward combination."
+    },
+    {
+        "id": 81,
+        "question": "What color is best for ethnic wear or traditional outfits?",
+        "answer": "Deep jewel tones like navy, plum, dark green, red, and orange are classic for ethnic wear. Beige and cream are elegant neutrals. Pair these with their complementary colors for a traditional yet stylish look."
+    },
+    {
+        "id": 82,
+        "question": "What color sneakers go with a grey outfit?",
+        "answer": "White, black, red, navy, or pink sneakers all work with a grey outfit. For a tonal look, grey sneakers in a slightly different shade keep it sleek and cohesive."
+    },
+    {
+        "id": 83,
+        "question": "What color heels go with a beige dress?",
+        "answer": "Navy, nude/cream, brown, black, or orange heels all look great with a beige dress. For a tonal warm look, yellow heels add a fun and unexpected pop."
+    },
+    {
+        "id": 84,
+        "question": "What color heels go with a green dress?",
+        "answer": "Orange, plum, black, or white heels complement a green dress beautifully. For a tonal look, yellow or light blue heels are chic and unexpected."
+    },
+    {
+        "id": 85,
+        "question": "What color blazer goes with a yellow dress?",
+        "answer": "A dark green, navy, or black blazer pairs well with a yellow dress. For a tonal look, a cream or ivory blazer creates an elegant, sun-kissed aesthetic."
+    },
+    {
+        "id": 86,
+        "question": "What color overcoat goes with a plum or purple outfit?",
+        "answer": "A grey, dark green, or navy overcoat complements a purple outfit. For a tonal look, a light blue or navy overcoat adds depth and sophistication."
+    },
+    {
+        "id": 87,
+        "question": "What colors look good on darker skin tones?",
+        "answer": "Rich, vibrant colors tend to look stunning on deeper skin tones. Orange, bright yellow, dark green, royal blue, red, plum, and white all pop beautifully. Avoid pastels close to skin tone as they can wash out."
+    },
+    {
+        "id": 88,
+        "question": "What colors look good on fair/light skin tones?",
+        "answer": "Jewel tones like navy, plum, dark green, and red look beautiful on fair skin. Soft pastels like pink and light blue are also flattering. Avoid very pale yellows or creams close to skin tone."
+    },
+    {
+        "id": 89,
+        "question": "What colors make you look slimmer?",
+        "answer": "Dark, rich colors like navy, black, dark green, plum, and deep grey have a slimming effect. Monochromatic tonal outfits also create a streamlined, elongated silhouette."
+    },
+    {
+        "id": 90,
+        "question": "What colors make you look taller?",
+        "answer": "Tonal head-to-toe outfits in navy, grey, or black create a long, unbroken line that makes you look taller. Vertical stripes in these colors also help elongate the figure."
+    },
+    {
+        "id": 91,
+        "question": "What is the best color combination for a wedding guest outfit?",
+        "answer": "For a wedding guest, elegant combos include navy and gold accessories, plum with grey or light blue, or beige with navy and orange accents. Avoid white as a guest. Red is bold but works well for evening weddings."
+    },
+    {
+        "id": 92,
+        "question": "What is the best color for a travel capsule wardrobe?",
+        "answer": "Build a travel capsule around navy, grey, and beige as your neutrals. They all mix and match together, and you can add pops of red, orange, or yellow with small accessories."
+    },
+    {
+        "id": 93,
+        "question": "What color outfit should I wear to a garden party?",
+        "answer": "Yellow with navy, light blue with pink, or green with orange are perfect for a garden party. Floral prints in these combinations are especially charming for such events."
+    },
+    {
+        "id": 94,
+        "question": "What color outfit is best for an evening dinner?",
+        "answer": "Navy, plum, dark green, or black outfits are timeless for evening dinners. Pair navy with grey or light blue accents, or plum with grey and black accessories for a sophisticated dinner look."
+    },
+    {
+        "id": 95,
+        "question": "What color clothes should I wear for a photoshoot?",
+        "answer": "For photography, solid-color outfits photograph best. Navy, white, red, green, or grey are excellent choices. Avoid very bright neons or all-white/all-black for outdoor shoots. Tonal outfits also look elegant in photos."
+    },
+    {
+        "id": 96,
+        "question": "Can I wear a pink and orange outfit together?",
+        "answer": "Pink and orange are not a listed complementary pair, so use caution. However, separated with a neutral like white or beige in between, they can work for a warm, sunset-inspired look. It's bold and experimental rather than traditional."
+    },
+    {
+        "id": 97,
+        "question": "Can brown and navy be worn together?",
+        "answer": "Brown and navy can be paired together for a classic, earthy-elegant look. While they aren't in the same complementary group, they are traditional menswear staples and work well in tailored outfits."
+    },
+    {
+        "id": 98,
+        "question": "What is the most timeless color combination?",
+        "answer": "Navy and white is arguably the most timeless combination — classic, clean, and always in style. Red and navy, or black and white, are equally enduring pairings that never go out of fashion."
+    },
+    {
+        "id": 99,
+        "question": "What colors should I avoid wearing together?",
+        "answer": "Avoid pairing colors not listed as complementary without careful thought — for example, orange with pink, or yellow with red, can clash. Also avoid wearing too many bold colors at once. Stick to one statement color and pair it with neutrals."
+    },
+    {
+        "id": 100,
+        "question": "How do I use this color guide in everyday shopping?",
+        "answer": "Identify your main outfit color, then use this guide to find complementary pairings for tops, bottoms, accessories, and shoes. For a safe look, stick to the complementary colors. For a fashion-forward look, try the tonal combinations. Neutrals like white, black, grey, and navy are always safe bases."
+    }
+]

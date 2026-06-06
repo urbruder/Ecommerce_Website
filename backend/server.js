@@ -8,6 +8,8 @@ import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import adminRouter from './routes/adminRoute.js';
+import chatbotRouter from './routes/chatbotRoute.js';
+import { loadFAQData } from './services/faqService.js';
 
 
 
@@ -32,5 +34,15 @@ app.get('/',(req,res)=>{
   res.send('API WORKING')
 })
 app.use("/api/admin", adminRouter);
+app.use('/api/chat', chatbotRouter)
 
-app.listen(port,()=>console.log('server started on PORT :' + port))
+// Load FAQ data into memory, then start the server
+loadFAQData()
+  .then(() => {
+    app.listen(port, () => console.log('server started on PORT :' + port));
+  })
+  .catch((error) => {
+    console.error('Failed to load FAQ data:', error.message);
+    // Start server anyway so other endpoints still work
+    app.listen(port, () => console.log('server started on PORT :' + port + ' (FAQ loading failed)'));
+  });

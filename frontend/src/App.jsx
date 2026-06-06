@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Route,Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import Collection from './pages/Collection'
@@ -18,8 +18,11 @@ import ForgetPassword from './pages/ForgetPassword'
 import ResetPassword from './pages/ResetPassword'
 import Profile from './pages/Profile'
 
+const ChatBot = lazy(() => import('./components/ChatBot/ChatBot'))
+
 const App = () => {
   return (
+    <>
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       <ToastContainer/>
     <Navbar/>
@@ -45,6 +48,10 @@ const App = () => {
            <Footer/>
 
     </div>
+    <Suspense fallback={null}>
+      <ChatBot />
+    </Suspense>
+    </>
   )
 }
 

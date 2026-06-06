@@ -1,0 +1,166 @@
+/* ============================================
+   AI Shopping Assistant — Custom Animations
+   ============================================ */
+
+/* Chat window entrance */
+@keyframes chatSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Chat window exit */
+@keyframes chatSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+
+/* Individual message appearance */
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Typing indicator bouncing dots */
+@keyframes typingDot {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* Launcher pulse glow ring */
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+/* Launcher icon rotation on toggle */
+@keyframes iconSpin {
+  from {
+    transform: rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Animation Classes
+   ============================================ */
+
+.chatbot-window-enter {
+  animation: chatSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.chatbot-window-exit {
+  animation: chatSlideDown 0.2s ease-in forwards;
+}
+
+.chatbot-message-enter {
+  animation: fadeInMessage 0.3s ease-out forwards;
+}
+
+.chatbot-launcher-pulse {
+  animation: pulseRing 2s ease-out infinite;
+}
+
+.chatbot-icon-enter {
+  animation: iconSpin 0.3s ease-out forwards;
+}
+
+/* Typing dots with staggered delay */
+.chatbot-typing-dot {
+  animation: typingDot 1.4s ease-in-out infinite;
+}
+.chatbot-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.chatbot-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ============================================
+   Chat Messages Scrollbar (override global hide)
+   ============================================ */
+
+.chatbot-messages-scroll::-webkit-scrollbar {
+  display: block !important;
+  width: 4px;
+}
+
+.chatbot-messages-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatbot-messages-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+
+.chatbot-messages-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox scrollbar */
+.chatbot-messages-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+/* ============================================
+   Quick Action Chips scroll (horizontal on tiny screens)
+   ============================================ */
+
+.chatbot-chips-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* ============================================
+   Product card image shimmer placeholder
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.chatbot-img-placeholder {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
