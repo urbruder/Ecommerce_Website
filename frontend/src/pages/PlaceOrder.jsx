@@ -4,6 +4,7 @@ import CartTotal from '../components/CartTotal'
 import { assets } from '../assets/assets'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const PlaceOrder = () => {
 
@@ -53,14 +54,19 @@ const PlaceOrder = () => {
         for(const items in cartItems){
           for(const item in cartItems[items]){
             if(cartItems[items][item]>0){
-              const itemInfo=structuredClone(products.find(products=>products._id===items))
-              if(itemInfo){
-                itemInfo.size=item
-                itemInfo.quantity=cartItems[items][item]
-                orderItems.push(itemInfo)
+              const product = products.find(p => p._id === items);
+              if(product){
+                const itemInfo = structuredClone(product);
+                itemInfo.size = item;
+                itemInfo.quantity = cartItems[items][item];
+                orderItems.push(itemInfo);
               }
             }
           }
+        }
+        if (orderItems.length === 0) {
+          toast.error('Your cart is empty');
+          return;
         }
         let orderData={
           address:formData,

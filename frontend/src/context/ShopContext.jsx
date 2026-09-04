@@ -80,6 +80,9 @@ const addToCart = async (itemId, size) => {
    const getCartCount=()=>{
     let totalCount=0;
     for(const items in cartItems){
+        if (products.length > 0 && !products.some(product => product._id === items)) {
+            continue;
+        }
         for(const item in cartItems[items]){
             try {
                 if(cartItems[items][item]>0){
@@ -178,6 +181,28 @@ const getCartAmount = () => {
             fetchUserProfile(savedToken);
          }
     },[])
+
+    // Clean up any items from cart that no longer exist in the products database
+    useEffect(() => {
+        if (products.length > 0 && Object.keys(cartItems).length > 0) {
+            let hasOrphan = false;
+            const updatedCart = structuredClone(cartItems);
+            for (const itemId in cartItems) {
+                if (!products.some(p => p._id === itemId)) {
+                    delete updatedCart[itemId];
+                    hasOrphan = true;
+                    if (token) {
+                        for (const size in cartItems[itemId]) {
+                            axios.post(backendUrl + '/api/cart/update', { itemId, size, quantity: 0 }, { headers: { token } }).catch(() => {});
+                        }
+                    }
+                }
+            }
+            if (hasOrphan) {
+                setCartItems(updatedCart);
+            }
+        }
+    }, [products, cartItems, token]);
 
 
     const value={
