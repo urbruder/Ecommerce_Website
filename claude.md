@@ -6,10 +6,10 @@ This document provides a comprehensive breakdown of the **ShopKart** MERN stack 
 
 ## 🏗️ Project Architecture Overview
 
-ShopKart is structured as a decoupled web application containing three main segments:
-1. **Backend Server**: Express.js server interacting with MongoDB (via Mongoose) for data storage, Cloudinary for media storage, Stripe for payment processing, and Gmail (via Nodemailer) for emailing. It also features a custom AI Chatbot engine integrating Google's Gemini 2.5 Flash.
-2. **Frontend Client (Vite + React)**: The main shopping portal where customers can browse, filter, search, manage carts, authentication, profiles, place orders, and chat with an AI assistant.
-3. **Admin Dashboard (Vite + React)**: The management panel for administrators to register inventory, monitor products, and change order processing status.
+ShopKart is structured as a decoupled web application containing three main segments, all fully containerized with Docker:
+1. **Backend Server**: Express.js server interacting with MongoDB (via Mongoose) for data storage, Cloudinary for media storage, Stripe for payment processing, and Gmail (via Nodemailer) for emailing. It also features a custom AI Chatbot engine integrating Google's Gemini 2.5 Flash. Containerized using a lightweight Node.js Alpine image.
+2. **Frontend Client (Vite + React)**: The main shopping portal where customers can browse, filter, search, manage carts, authentication, profiles, place orders, and chat with an AI assistant. Containerized via multi-stage builds and served with high-performance Nginx with SPA routing support.
+3. **Admin Dashboard (Vite + React)**: The management panel for administrators to register inventory, monitor products, and change order processing status. Containerized via multi-stage builds and served with Nginx.
 
 ---
 
@@ -39,6 +39,209 @@ SIMILARITY_THRESHOLD=0.45              # Chatbot matching threshold (0.0 to 1.0)
 ```env
 VITE_BACKEND_URL=http://localhost:4000
 ```
+
+> [!NOTE]
+> In Docker deployments, `.env` files are excluded from images via `.dockerignore` for security. Backend environment variables are supplied at container runtime (via `--env-file` or orchestration configs), while `VITE_*` variables for frontend and admin are baked into static assets during the Vite build step (`npm run build`).
+
+---
+
+## 🐳 Docker Containerization Architecture & Deployment
+
+All three components of ShopKart (Backend, Frontend Client, and Admin Dashboard) are containerized using Docker. The frontend applications utilize multi-stage builds with Nginx for optimal production performance, while the backend utilizes a lightweight Node.js Alpine runtime.
+
+### 📋 Container Overview Matrix
+
+| Service | Directory | Dockerfile | Base Image(s) | Internal Port | Host Port Mapping | Runtime / Web Server |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Backend API** | `/backend` | [backend/Dockerfile](file:///d:/Ecommerce1/backend/Dockerfile) | `node:26-alpine` | `4000` | `4000:4000` | Node.js (`server.js`) |
+| **Frontend Client** | `/frontend` | [frontend/Dockerfile](file:///d:/Ecommerce1/frontend/Dockerfile) | `node:20` (build) &rarr; `nginx:alpine` (runtime) | `80` | `5173:80` (or `80:80`) | Nginx (Reverse Proxy & SPA Static Server) |
+| **Admin Panel** | `/admin` | [admin/Dockerfile](file:///d:/Ecommerce1/admin/Dockerfile) | `node:20` (build) &rarr; `nginx:alpine` (runtime) | `80` | `5174:80` (or `81:80`) | Nginx (Reverse Proxy & SPA Static Server) |
+
+---
+
+### 1. Backend Service Containerization
+
+- **Dockerfile**: [backend/Dockerfile](file:///d:/Ecommerce1/backend/Dockerfile)
+- **Base Image**: `node:26-alpine` (Minimal Alpine Linux distribution to minimize container footprint and attack surface)
+- **Deterministic Dependency Installation**: Uses `npm ci` rather than `npm install` for reliable, lockfile-exact builds based on `package-lock.json`.
+- **Exposed Port**: `4000`
+- **Dockerignore Rules** ([backend/.dockerignore](file:///d:/Ecommerce1/backend/.dockerignore)):
+  ```text
+  node_modules
+  .env
+  .git
+  ```
+  Prevents local `node_modules`, credentials, and Git history from leaking into the container image.
+- **Runtime Configuration**: Passes environment variables using `--env-file` or `-e` at container startup.
+
+#### Build & Run Commands:
+```bash
+# Navigate to backend directory
+cd backend
+
+# Build backend image
+docker build -t shopkart-backend .
+
+# Run backend container with environment variables
+docker run -d \
+  --name shopkart-backend \
+  -p 4000:4000 \
+  --env-file .env \
+  shopkart-backend
+```
+
+---
+
+### 2. Frontend Client Containerization (Multi-Stage Build)
+
+- **Dockerfile**: [frontend/Dockerfile](file:///d:/Ecommerce1/frontend/Dockerfile)
+- **Stage 1 — Build (`node:20 AS build`)**:
+  - Sets working directory to `/app`.
+  - Installs dependencies with `npm install`.
+  - Copies source code and executes `npm run build`, producing production-optimized static bundles in `/app/dist`.
+- **Stage 2 — Production Web Server (`nginx:alpine`)**:
+  - Copies compiled assets from build stage (`/app/dist`) to `/usr/share/nginx/html`.
+  - Replaces default Nginx configuration with [frontend/nginx.conf](file:///d:/Ecommerce1/frontend/nginx.conf) at `/etc/nginx/conf.d/default.conf`.
+  - Exposes port `80` and runs Nginx in the foreground (`nginx -g 'daemon off;'`).
+- **SPA Fallback Routing**:
+  The custom `nginx.conf` implements the `try_files $uri $uri/ /index.html;` rule. This ensures client-side routes managed by React Router (e.g., `/collection`, `/product/:id`, `/cart`, `/orders`, `/profile`) reload smoothly without returning Nginx 404 errors.
+- **Dockerignore Rules** ([frontend/.dockerignore](file:///d:/Ecommerce1/frontend/.dockerignore)):
+  ```text
+  node_modules
+  dist
+  .git
+  ```
+
+#### Build & Run Commands:
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Build frontend image
+docker build -t shopkart-frontend .
+
+# Run container mapping port 5173 on host to port 80 in container
+docker run -d \
+  --name shopkart-frontend \
+  -p 5173:80 \
+  shopkart-frontend
+```
+
+---
+
+### 3. Admin Panel Containerization (Multi-Stage Build)
+
+- **Dockerfile**: [admin/Dockerfile](file:///d:/Ecommerce1/admin/Dockerfile)
+- **Stage 1 — Build (`node:20 AS build`)**:
+  - Sets working directory to `/app`.
+  - Installs dependencies with `npm install`.
+  - Copies source files and runs `npm run build`, outputting compiled assets into `/app/dist`.
+- **Stage 2 — Production Web Server (`nginx:alpine`)**:
+  - Copies `/app/dist` to `/usr/share/nginx/html`.
+  - Copies custom [admin/nginx.conf](file:///d:/Ecommerce1/admin/nginx.conf) to `/etc/nginx/conf.d/default.conf`.
+  - Exposes port `80` with `daemon off;` execution.
+- **SPA Fallback Routing**:
+  Implements `try_files $uri $uri/ /index.html;` so navigation and refreshes on admin routes (`/add`, `/list`, `/orders`) resolve correctly to `index.html`.
+- **Dockerignore Rules** ([admin/.dockerignore](file:///d:/Ecommerce1/admin/.dockerignore)):
+  ```text
+  node_modules
+  dist
+  .git
+  ```
+
+#### Build & Run Commands:
+```bash
+# Navigate to admin directory
+cd admin
+
+# Build admin image
+docker build -t shopkart-admin .
+
+# Run container mapping port 5174 on host to port 80 in container
+docker run -d \
+  --name shopkart-admin \
+  -p 5174:80 \
+  shopkart-admin
+```
+
+---
+
+### 4. Full-Stack Docker Compose Orchestration (Reference)
+
+To spin up all three services concurrently in an isolated bridge network, create a `docker-compose.yml` in the project root:
+
+```yaml
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shopkart-backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    networks:
+      - shopkart-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shopkart-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - shopkart-net
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: shopkart-admin
+    ports:
+      - "5174:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - shopkart-net
+
+networks:
+  shopkart-net:
+    driver: bridge
+```
+
+#### Compose Commands:
+```bash
+# Build images and start all containers in background
+docker compose up -d --build
+
+# Monitor live logs across all containers
+docker compose logs -f
+
+# Stop and tear down containers and networks
+docker compose down
+```
+
+---
+
+### ⚠️ Critical Containerization & Deployment Best Practices
+
+1. **Vite Build-Time Environment Baking**:
+   Vite statically replaces variables prefixed with `VITE_` (such as `VITE_BACKEND_URL`) during the `npm run build` execution phase inside the Docker build container. Make sure the target backend URL (e.g. `http://localhost:4000` or production domain) is set in `/frontend/.env` and `/admin/.env` before building the images.
+2. **Nginx Client-Side Routing**:
+   Both frontend and admin applications are Single Page Applications using HTML5 pushState routing. The Nginx directive `try_files $uri $uri/ /index.html;` is mandatory to avoid HTTP 404 errors when users refresh deep URLs.
+3. **Multi-Stage Build Efficiency**:
+   Separating the build stage (`node:20`) from the runtime stage (`nginx:alpine`) ensures development dependencies, source code, and the Node runtime are stripped from final images. This drops the production image size to ~25–35MB.
+4. **Credential Isolation**:
+   The `.dockerignore` files prevent local `.env` files from entering the Docker build context or being embedded inside layers, keeping API keys, Stripe secrets, and JWT tokens protected.
 
 ---
 
