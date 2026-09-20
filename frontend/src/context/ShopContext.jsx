@@ -182,6 +182,13 @@ const getCartAmount = () => {
          }
     },[])
 
+    // Fetch user profile whenever token changes (handles login/signup flow)
+    useEffect(()=>{
+        if(token){
+            fetchUserProfile(token);
+        }
+    },[token])
+
     // Clean up any items from cart that no longer exist in the products database
     useEffect(() => {
         if (products.length > 0 && Object.keys(cartItems).length > 0) {

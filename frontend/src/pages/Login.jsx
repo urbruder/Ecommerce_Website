@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const Login = () => {
   const [currentState,setCurrentState]=useState('Login')
-  const {token,setToken,navigate,backendUrl}=useContext(ShopContext);
+  const {token,setToken,navigate,backendUrl,fetchUserProfile}=useContext(ShopContext);
   const [name,setName]=useState('');
   const [email,setEmail]=useState('');
   const [password,setPassword]=useState('');
@@ -17,6 +17,7 @@ const Login = () => {
               if (response.data.success) {
                 setToken(response.data.token);
                 localStorage.setItem('token',response.data.token)
+                fetchUserProfile(response.data.token)
               }
               else{
                 toast.error(response.data.message)
@@ -26,7 +27,8 @@ const Login = () => {
                const response=await axios.post(backendUrl+'/api/user/login',{email,password})
                if (response.data.success) {
                 setToken(response.data.token)
-                 localStorage.setItem('token',response.data.token)
+                localStorage.setItem('token',response.data.token)
+                fetchUserProfile(response.data.token)
                }
                else{
                 toast.error(response.data.message)
