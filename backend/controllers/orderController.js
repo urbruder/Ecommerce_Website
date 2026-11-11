@@ -1,6 +1,7 @@
 
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import productModel from "../models/productModel.js";
 import Stripe from 'stripe'
 
 // Global Variables
@@ -10,11 +11,44 @@ const deliveryCharge=10
 // Gateway Initialised
 const stripe=new Stripe(process.env.STRIPE_SECRET_KEY)
 
+// Helper: derive firstName and lastName from MongoDB account name and enforce account identity
+const getSanitizedAddress = async (userId, clientAddress = {}) => {
+    const user = await userModel.findById(userId);
+    if (!user) {
+        throw new Error("User not found");
+    }
+    const nameTokens = (user.name || '').trim().split(/\s+/).filter(Boolean);
+    const firstName = nameTokens[0] || clientAddress.firstName || '';
+    const lastName = nameTokens.slice(1).join(' ') || clientAddress.lastName || '';
+    const email = user.email || clientAddress.email || '';
+
+    return {
+        ...clientAddress,
+        firstName,
+        lastName,
+        email
+    };
+};
+
+// Helper: compute total order amount securely from DB product prices + deliveryCharge
+const calculateOrderAmount = async (items) => {
+    let subtotal = 0;
+    for (const item of items) {
+        const product = await productModel.findById(item._id);
+        if (!product) {
+            throw new Error(`Product not found: ${item.name || item._id}`);
+        }
+        subtotal += product.price * item.quantity;
+    }
+    return subtotal + deliveryCharge;
+};
+
 
 // Placing order using COD method
  const placeOrder=async(req,res)=>{
 try {
-    const {userId,items,amount,address}=req.body;
+    const {userId,items,amount}=req.body;
+    const address = await getSanitizedAddress(userId, req.body.address);
     const orderData={
         userId,
         items,
@@ -33,7 +67,7 @@ try {
      res.json({success:true,message:"Order Placed"});
 
 } catch (error) {
-    console.log(error);
+    console.error("placeOrder error:", error.message);
     res.json({success:false,message:error.message});
 }
 }
@@ -42,8 +76,9 @@ try {
  const placeOrderStripe=async(req,res)=>{
     try {
         
-        const {userId,items,amount,address}=req.body;
+        const {userId,items,amount}=req.body;
         const {origin}=req.headers;
+        const address = await getSanitizedAddress(userId, req.body.address);
 
         const orderData={
         userId,
@@ -88,7 +123,7 @@ try {
 
      res.json({success:true,session_url:session.url});
     } catch (error) {
-    console.log(error);
+    console.error("placeOrderStripe error:", error.message);
     res.json({success:false,message:error.message});  
     }
 }
@@ -102,13 +137,148 @@ const verifyStripe=async(req,res)=>{
             await orderModel.findByIdAndUpdate(orderId,{payment:true})
             await userModel.findByIdAndUpdate(userId,{cartData:{}})
             res.json({success:true,message:"Order Placed"})
+        } else {
+            await orderModel.findByIdAndDelete(orderId);
+            res.json({success:false,message:"Payment cancelled or failed"});
         }
      } catch (error) {
-        console.log(error);
+        console.error("verifyStripe error:", error.message);
         res.json({success:false,message:error.message});
         
      }
 }
+
+// Create Card PaymentIntent & Pending Order
+const createCardIntent = async (req, res) => {
+    try {
+        const { userId, items } = req.body;
+
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.json({ success: false, message: "Cart is empty" });
+        }
+
+        const address = await getSanitizedAddress(userId, req.body.address);
+        const calculatedAmount = await calculateOrderAmount(items);
+
+        const orderData = {
+            userId,
+            items,
+            address,
+            amount: calculatedAmount,
+            paymentMethod: "Card",
+            payment: false,
+            status: "Order Placed",
+            date: Date.now()
+        };
+
+        const newOrder = new orderModel(orderData);
+        await newOrder.save();
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(calculatedAmount * 100),
+            currency: currency,
+            metadata: {
+                orderId: newOrder._id.toString(),
+                userId: userId.toString()
+            },
+            description: "ShopKart Order Payment"
+        });
+
+        newOrder.stripePaymentIntentId = paymentIntent.id;
+        await newOrder.save();
+
+        res.json({
+            success: true,
+            clientSecret: paymentIntent.client_secret,
+            orderId: newOrder._id,
+            paymentIntentId: paymentIntent.id
+        });
+
+    } catch (error) {
+        console.error("createCardIntent error:", error.message);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+// Verify Card Payment
+const verifyCard = async (req, res) => {
+    try {
+        const { orderId, paymentIntentId, userId } = req.body;
+
+        if (!orderId) {
+            return res.json({ success: false, message: "Order ID is required" });
+        }
+
+        const order = await orderModel.findById(orderId);
+        if (!order) {
+            return res.json({ success: false, message: "Order not found" });
+        }
+
+        if (order.userId !== userId) {
+            return res.json({ success: false, message: "Unauthorized order access" });
+        }
+
+        // Idempotency: if already verified, return success safely
+        if (order.payment) {
+            return res.json({ success: true, message: "Order already verified" });
+        }
+
+        if (!paymentIntentId) {
+            await orderModel.findByIdAndDelete(orderId);
+            return res.json({ success: false, message: "PaymentIntent ID is required" });
+        }
+
+        let paymentIntent;
+        try {
+            paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        } catch (retrieveError) {
+            console.error("Stripe retrieve error:", retrieveError.message);
+            await orderModel.findByIdAndDelete(orderId);
+            return res.json({ success: false, message: "Failed to retrieve payment from Stripe" });
+        }
+
+        const expectedAmount = Math.round(order.amount * 100);
+        const isStatusSucceeded = paymentIntent.status === 'succeeded';
+        const isAmountValid = paymentIntent.amount === expectedAmount;
+        const isOrderMatch = paymentIntent.metadata?.orderId === orderId.toString();
+        const isUserMatch = paymentIntent.metadata?.userId === userId.toString();
+
+        if (isStatusSucceeded && isAmountValid && isOrderMatch && isUserMatch) {
+            let cardBrand = '';
+            let cardLast4 = '';
+
+            if (paymentIntent.payment_method) {
+                try {
+                    const pm = await stripe.paymentMethods.retrieve(paymentIntent.payment_method);
+                    cardBrand = pm.card?.brand || '';
+                    cardLast4 = pm.card?.last4 || '';
+                } catch (_) {}
+            }
+
+            await orderModel.findByIdAndUpdate(orderId, {
+                payment: true,
+                stripePaymentIntentId: paymentIntent.id,
+                cardBrand,
+                cardLast4
+            });
+
+            await userModel.findByIdAndUpdate(userId, { cartData: {} });
+
+            return res.json({ success: true, message: "Order Placed" });
+        } else {
+            // Payment not successful or verification mismatch - delete pending unpaid order
+            await orderModel.findByIdAndDelete(orderId);
+            return res.json({
+                success: false,
+                message: `Payment verification failed (status: ${paymentIntent.status})`
+            });
+        }
+
+    } catch (error) {
+        console.error("verifyCard error:", error.message);
+        res.json({ success: false, message: error.message });
+    }
+};
 
 // Placing order using Razorpay method
  const placeOrderRazorpay=async(req,res)=>{
@@ -152,4 +322,4 @@ const updateStatus=async(req,res)=>{
    }
 }
 
-export {placeOrder,allOrders,userOrders,updateStatus,placeOrderStripe,placeOrderRazorpay,verifyStripe};
+export {placeOrder,allOrders,userOrders,updateStatus,placeOrderStripe,placeOrderRazorpay,verifyStripe,createCardIntent,verifyCard};

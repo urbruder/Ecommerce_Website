@@ -3,9 +3,13 @@
 // ============================================
 // NO Gemini SDK. Uses native fetch() to call
 // the Gemini REST API directly via HTTPS.
+// Features fast response optimization and fallback.
 // ============================================
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+// Primary model: gemini-1.5-flash is Google's fast, high-rate-limit production model
+// Fallback model: gemini-1.5-flash-8b acts as secondary backup if primary times out or is busy
+const PRIMARY_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const FALLBACK_MODEL = 'gemini-1.5-flash-8b';
 
 /**
  * Build the system prompt with FAQ context and conversation history.
@@ -54,6 +58,35 @@ Your responsibilities:
 };
 
 /**
+ * Helper to call Gemini REST endpoint with timeout
+ */
+const sendGeminiRequest = async (modelName, requestBody, apiKey, timeoutMs = 12000) => {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`API error (${response.status}): ${errorBody}`);
+  }
+
+  const data = await response.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!text) {
+    throw new Error('Gemini API returned an empty response');
+  }
+
+  return text.trim();
+};
+
+/**
  * Send a request to Gemini API via HTTPS and return the response text.
  * 
  * @param {string} userQuestion - Current user question
@@ -82,7 +115,7 @@ const getGeminiResponse = async (userQuestion, conversationHistory = [], relevan
       temperature: 0.7,
       topP: 0.9,
       topK: 40,
-      maxOutputTokens: 512,
+      maxOutputTokens: 256,
     },
     safetySettings: [
       {
@@ -104,39 +137,27 @@ const getGeminiResponse = async (userQuestion, conversationHistory = [], relevan
     ]
   };
 
-  const url = `${GEMINI_API_URL}?key=${apiKey}`;
-
   const startTime = Date.now();
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody),
-  });
+  try {
+    const text = await sendGeminiRequest(PRIMARY_MODEL, requestBody, apiKey, 12000);
+    const elapsed = Date.now() - startTime;
+    console.log(`[Gemini Service] Response received from ${PRIMARY_MODEL} in ${elapsed}ms (${text.length} chars)`);
+    return text;
+  } catch (primaryErr) {
+    console.warn(`[Gemini Service] Primary model (${PRIMARY_MODEL}) failed or timed out: ${primaryErr.message}`);
 
-  const elapsed = Date.now() - startTime;
+    if (PRIMARY_MODEL !== FALLBACK_MODEL) {
+      console.log(`[Gemini Service] Falling back to fast model: ${FALLBACK_MODEL}...`);
+      const fallbackStart = Date.now();
+      const text = await sendGeminiRequest(FALLBACK_MODEL, requestBody, apiKey, 10000);
+      const elapsed = Date.now() - fallbackStart;
+      console.log(`[Gemini Service] Fallback response received from ${FALLBACK_MODEL} in ${elapsed}ms (${text.length} chars)`);
+      return text;
+    }
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    console.error(`[Gemini Service] API error (${response.status}) after ${elapsed}ms:`, errorBody);
-    throw new Error(`Gemini API request failed with status ${response.status}`);
+    throw primaryErr;
   }
-
-  const data = await response.json();
-
-  // Extract text from Gemini response
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-  if (!text) {
-    console.error('[Gemini Service] Empty response from Gemini API');
-    throw new Error('Gemini API returned an empty response');
-  }
-
-  console.log(`[Gemini Service] Response received in ${elapsed}ms (${text.length} chars)`);
-
-  return text.trim();
 };
 
 export { getGeminiResponse, buildPrompt };

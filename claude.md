@@ -7,7 +7,7 @@ This document provides a comprehensive breakdown of the **ShopKart** MERN stack 
 ## 🏗️ Project Architecture Overview
 
 ShopKart is structured as a decoupled web application containing three main segments, all fully containerized with Docker:
-1. **Backend Server**: Express.js server interacting with MongoDB (via Mongoose) for data storage, Cloudinary for media storage, Stripe for payment processing, and Gmail (via Nodemailer) for emailing. It also features a custom AI Chatbot engine integrating Google's Gemini 2.5 Flash. Containerized using a lightweight Node.js Alpine image.
+1. **Backend Server**: Express.js server interacting with MongoDB (via Mongoose) for data storage, Cloudinary for media storage, Stripe for payment processing, and Gmail (via Nodemailer) for emailing. It also features a custom AI Chatbot engine integrating Google's Gemini 3.8 Flash. Containerized using a lightweight Node.js Alpine image.
 2. **Frontend Client (Vite + React)**: The main shopping portal where customers can browse, filter, search, manage carts, authentication, profiles, place orders, and chat with an AI assistant. Containerized via multi-stage builds and served with high-performance Nginx with SPA routing support.
 3. **Admin Dashboard (Vite + React)**: The management panel for administrators to register inventory, monitor products, and change order processing status. Containerized via multi-stage builds and served with Nginx.
 
@@ -36,6 +36,14 @@ SIMILARITY_THRESHOLD=0.45              # Chatbot matching threshold (0.0 to 1.0)
 ```
 
 ### Frontend Clients Configuration (`/frontend/.env` and `/admin/.env`)
+
+#### Frontend Client Configuration (`/frontend/.env`)
+```env
+VITE_BACKEND_URL=http://localhost:4000
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_... # Stripe Publishable Key for Stripe Elements
+```
+
+#### Admin Panel Configuration (`/admin/.env`)
 ```env
 VITE_BACKEND_URL=http://localhost:4000
 ```
@@ -235,7 +243,7 @@ docker compose down
 ### ⚠️ Critical Containerization & Deployment Best Practices
 
 1. **Vite Build-Time Environment Baking**:
-   Vite statically replaces variables prefixed with `VITE_` (such as `VITE_BACKEND_URL`) during the `npm run build` execution phase inside the Docker build container. Make sure the target backend URL (e.g. `http://localhost:4000` or production domain) is set in `/frontend/.env` and `/admin/.env` before building the images.
+   Vite statically replaces variables prefixed with `VITE_` (such as `VITE_BACKEND_URL` and `VITE_STRIPE_PUBLISHABLE_KEY`) during the `npm run build` execution phase inside the Docker build container. Make sure the target backend URL (e.g. `http://localhost:4000` or production domain) and Stripe publishable key are set in `/frontend/.env` before building the images.
 2. **Nginx Client-Side Routing**:
    Both frontend and admin applications are Single Page Applications using HTML5 pushState routing. The Nginx directive `try_files $uri $uri/ /index.html;` is mandatory to avoid HTTP 404 errors when users refresh deep URLs.
 3. **Multi-Stage Build Efficiency**:
@@ -275,9 +283,12 @@ Tracks customer purchases and shipment states.
 - `amount` (Number, required) - Total invoice cost
 - `address` (Object, required) - Target shipping address details
 - `status` (String, required, default: `"Order Placed"`) - States: `"Order Placed"`, `"Packing"`, `"Shipped"`, `"Out for delivery"`, `"Delivered"`
-- `paymentMethod` (String, required) - e.g., `"COD"`, `"Stripe"`
+- `paymentMethod` (String, required) - e.g., `"COD"`, `"Stripe"`, `"Card"`
 - `payment` (Boolean, required, default: `false`) - Payment completion state
 - `date` (Number, required) - Transaction timestamp
+- `stripePaymentIntentId` (String, optional, default: `""`) - Stripe PaymentIntent identifier
+- `cardBrand` (String, optional, default: `""`) - Card brand (e.g. "visa", "mastercard")
+- `cardLast4` (String, optional, default: `""`) - Last 4 digits of payment card
 
 ---
 
@@ -396,34 +407,48 @@ Tracks customer purchases and shipment states.
 - **Endpoint**: `POST /api/order/place`
 - **Authentication**: User Token (Header: `token`)
 - **Payload**: `{ "items": [...], "amount": 120, "address": { ... } }`
-- **Functionality**: Creates order in DB with `paymentMethod: "COD"`, marks `payment: false`, and empties the user's database cart.
+- **Functionality**: Creates order in DB with `paymentMethod: "COD"`, marks `payment: false`, and empties the user's database cart. Enforces account identity (`firstName`, `lastName`, `email`) from MongoDB, overriding client values.
 - **Response**: `{ "success": true, "message": "Order Placed" }`
 
 #### 2. Place Order via Stripe (Session Creation)
 - **Endpoint**: `POST /api/order/stripe`
 - **Authentication**: User Token (Header: `token`)
 - **Payload**: `{ "items": [...], "amount": 120, "address": { ... } }`
-- **Functionality**: Creates order in DB, builds Stripe line items (attaching delivery charges), generates a Stripe checkout session, and returns redirect URL.
+- **Functionality**: Creates order in DB, builds Stripe line items (attaching delivery charges), generates a Stripe checkout session, and returns redirect URL. Enforces account identity (`firstName`, `lastName`, `email`) from MongoDB, overriding client values.
 - **Response**: `{ "success": true, "session_url": "STRIPE_CHECKOUT_URL" }`
 
 #### 3. Verify Stripe Payment State
 - **Endpoint**: `POST /api/order/verifyStripe`
 - **Authentication**: User Token (Header: `token`)
 - **Payload**: `{ "success": "true"/"false", "orderId": "ORDER_ID" }`
-- **Functionality**: Updates order `payment` to `true` and clears the cart if verification succeeds.
+- **Functionality**: Updates order `payment` to `true` and clears the cart if verification succeeds. If payment failed or was cancelled, removes the pending order.
 - **Response**: `{ "success": true, "message": "Order Placed" }`
 
-#### 4. Fetch Customer Purchases
+#### 4. Create Card PaymentIntent & Pending Order
+- **Endpoint**: `POST /api/order/card-intent`
+- **Authentication**: User Token (Header: `token`)
+- **Payload**: `{ "items": [...], "address": { ... } }`
+- **Functionality**: Enforces account identity from MongoDB, computes amount server-side from product DB prices + delivery fee (`10`), creates pending order (`paymentMethod: "Card"`, `payment: false`, `status: "Order Placed"`), creates a Stripe PaymentIntent with `{ orderId, userId }` metadata, and returns client secret.
+- **Response**: `{ "success": true, "clientSecret": "pi_..._secret_...", "orderId": "ORDER_ID", "paymentIntentId": "pi_..." }`
+
+#### 5. Verify Card Payment State
+- **Endpoint**: `POST /api/order/verifyCard`
+- **Authentication**: User Token (Header: `token`)
+- **Payload**: `{ "orderId": "ORDER_ID", "paymentIntentId": "pi_..." }`
+- **Functionality**: Retrieves PaymentIntent from Stripe, verifies `status === 'succeeded'`, checks that the charged amount matches DB order amount and metadata matches `orderId` and `userId`. On success, updates order `payment` to `true`, saves card brand and last 4 digits, and clears user cart. If payment not succeeded or mismatched, deletes the pending order and preserves cart.
+- **Response**: `{ "success": true, "message": "Order Placed" }`
+
+#### 6. Fetch Customer Purchases
 - **Endpoint**: `POST /api/order/userOrders`
 - **Authentication**: User Token (Header: `token`)
 - **Response**: `{ "success": true, "orders": [...] }`
 
-#### 5. List All System Orders (Admin Only)
+#### 7. List All System Orders (Admin Only)
 - **Endpoint**: `POST /api/order/list`
 - **Authentication**: Admin Token (Header: `Authorization: Bearer <token>`)
 - **Response**: `{ "success": true, "orders": [...] }`
 
-#### 6. Update Order Status (Admin Only)
+#### 8. Update Order Status (Admin Only)
 - **Endpoint**: `POST /api/order/status`
 - **Authentication**: Admin Token (Header: `Authorization: Bearer <token>`)
 - **Payload**: `{ "orderId": "ORDER_ID", "status": "Shipped" }`
@@ -488,7 +513,7 @@ Using the React Context API, `ShopContext` acts as the central hub:
 - **Collection (`/collection`)**: Interactive sidebar to filter items by category (Men, Women, Kids), clothing types (Topwear, Bottomwear, Winterwear), and sort by price (Low to High, High to Low).
 - **Product Details (`/product/:productId`)**: Details description, size option picker, product photo carousel, and similar product recommendation widgets.
 - **Cart (`/cart`)**: Detailed item layout matching quantities, with live totals calculated from `ShopContext`.
-- **PlaceOrder (`/place-order`)**: Shipping forms, cart totals breakdown, and payment gateways selection.
+- **PlaceOrder (`/place-order`)**: Shipping forms, cart totals breakdown, dedicated ADD CARD section (rendered between CartTotal and Payment Method with persistent Stripe Elements CardElement and ref-based confirm flow), and PAYMENT METHOD section (Stripe and Cash on Delivery). The Card mode is mutually exclusive with Stripe and COD. Features read-only identity fields (First name, Last name, Email) populated from the logged-in user profile, with editable shipping address fields.
 - **Orders (`/orders`)**: Customer purchasing records, payment confirmation badges, status updates, and return request interfaces.
 - **Authentication**:
   - Login/Register (`/login`)

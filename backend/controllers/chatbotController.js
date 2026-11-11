@@ -30,6 +30,8 @@ const SIMILARITY_THRESHOLD = parseFloat(process.env.SIMILARITY_THRESHOLD) || 0.4
  * }
  */
 const handleChatMessage = async (req, res) => {
+  let topMatches = [];
+
   try {
     const { message, conversationHistory = [] } = req.body;
 
@@ -68,7 +70,7 @@ const handleChatMessage = async (req, res) => {
     console.log(`[Chatbot] ⚡ Confidence ${confidence} < ${SIMILARITY_THRESHOLD} — triggering Gemini fallback`);
 
     // Get top 3 relevant FAQs for context injection
-    const topMatches = getTopMatches(userQuery, 3);
+    topMatches = getTopMatches(userQuery, 3);
 
     console.log(`[Chatbot] Injecting ${topMatches.length} FAQ entries into Gemini context`);
     topMatches.forEach((m, i) => {
@@ -103,17 +105,32 @@ const handleChatMessage = async (req, res) => {
       });
     }
 
-    if (error.message.includes('Gemini API request failed')) {
-      return res.status(502).json({
-        success: false,
-        message: 'AI service is temporarily unavailable. Please try again later.'
-      });
-    }
-
     if (error.message.includes('FAQ data not loaded')) {
       return res.status(503).json({
         success: false,
         message: 'Knowledge base is still loading. Please try again in a moment.'
+      });
+    }
+
+    // Graceful fallback for timeouts or temporary AI unavailability
+    if (
+      error.name === 'TimeoutError' ||
+      error.message.includes('timeout') ||
+      error.message.includes('aborted') ||
+      error.message.includes('Gemini API request failed') ||
+      error.message.includes('API error')
+    ) {
+      if (topMatches && topMatches.length > 0 && topMatches[0].faq?.answer) {
+        return res.json({
+          source: 'faq-fallback',
+          confidence: topMatches[0].score || 0.3,
+          answer: topMatches[0].faq.answer
+        });
+      }
+      return res.json({
+        source: 'assistant-fallback',
+        confidence: 0,
+        answer: "I'm having a little trouble connecting to our live shopping assistant right now. Please feel free to check our FAQs or contact customer support!"
       });
     }
 

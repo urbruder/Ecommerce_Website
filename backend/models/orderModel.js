@@ -34,6 +34,18 @@ payment:{
 date:{
     type:Number,
     required:true
+},
+stripePaymentIntentId:{
+    type:String,
+    default:''
+},
+cardBrand:{
+    type:String,
+    default:''
+},
+cardLast4:{
+    type:String,
+    default:''
 }
 
 })
